@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
+import { getSignedConfig } from 'mobileconfig';
 import fetch from 'node-fetch';
 import { build } from 'plist';
 import { URL } from 'url';
@@ -16,11 +17,17 @@ export interface WebClip extends WebClipData {
 	icon: Uint8Array
 }
 
+export interface SigningData {
+	key: string
+	cert: string
+}
+
 export interface ConfigInfo {
 	name: string
 	author: string
 	desc: string
 	id_prefix: `${string | ''}.${string}.${string}`
+	signing?: SigningData
 }
 
 export class WebClips extends BaseStore<string, WebClipData> {
@@ -46,6 +53,7 @@ export class Config implements ConfigInfo {
 	author: string;
 	desc: string
 	id_prefix: `${string | ''}.${string}.${string}`
+	signing?: SigningData
 	webclips: WebClips
 
 	constructor(data: ConfigInfo) {
@@ -53,6 +61,10 @@ export class Config implements ConfigInfo {
 		this.author = data.author;
 		this.desc = data.desc;
 		this.id_prefix = data.id_prefix;
+		if (typeof data.signing !== 'undefined') {
+			this.signing = data.signing;
+		}
+
 		this.webclips = new WebClips();
 	}
 
@@ -65,8 +77,12 @@ export class Config implements ConfigInfo {
 		return true;
 	}
 
+	async signConfig(config: unknown): Promise<Buffer> {
+		const { signing } = this;
+		return new Promise((resolve, reject) => getSignedConfig(config, signing, (err, data) => err ? reject(err) : resolve(data)));
+	}
 
-	async compile(): Promise<string> {
+	async compile(): Promise<Buffer> {
 		const app_uuid = v4().toUpperCase();
 
 		const PayloadContent = [];
@@ -112,10 +128,13 @@ export class Config implements ConfigInfo {
 			PayloadVersion: 1
 		};
 
+		if (typeof this.signing !== 'undefined') {
+			return this.signConfig(payload);
+		}
 
 		const res = build(payload as any);
 
 		// console.log(res);
-		return res;
+		return Buffer.from(res);
 	}
 }
