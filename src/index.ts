@@ -36,7 +36,6 @@ export interface ConfigBase {
 	name: string
 	author: string
 	desc: string
-	id_prefix: `${string | ''}.${string}.${string}`
 	signing?: SigningData
 }
 
@@ -115,7 +114,6 @@ export class Config {
 	name: string;
 	author: string;
 	desc: string
-	id_prefix: `${string | ''}.${string}.${string}`
 	type?: ConfigType
 	signing?: SigningData
 	webclips?: WebClips
@@ -129,11 +127,10 @@ export class Config {
 		return (this as ConfigAdHoc).type === 'adhoc';
 	}
 
-	constructor(data: ConfigInfo) {
-		this.name = data.name;
-		this.author = data.author;
-		this.desc = data.desc;
-		this.id_prefix = data.id_prefix;
+	constructor(data: Partial<ConfigInfo>) {
+		this.name = data.name || 'Unknown';
+		this.author = data.author || 'Unknown';
+		this.desc = data.desc || `Type: ${this.type}`;
 		if (typeof data.signing !== 'undefined') {
 			this.signing = data.signing;
 		}
