@@ -134,10 +134,8 @@ export class Config {
 		if (typeof data.signing !== 'undefined') {
 			this.signing = data.signing;
 		}
+		this.type = data.type || 'web';
 
-		if (typeof this.type === 'undefined') {
-			this.type = 'web';
-		}
 		switch (this.type) {
 			case 'adhoc':
 				this.packages = new Packages();

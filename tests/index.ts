@@ -6,7 +6,6 @@ const config = new Config({
 	name: 'S0n1c\'s Site',
 	author: 'S0n1c',
 	desc: 'A test webclip',
-	id_prefix: 'ca.s0n1c.webclip',
 	signing: {
 		key: readFileSync(join(__dirname, 'key.pem'), { encoding: 'utf-8' }),
 		cert: readFileSync(join(__dirname, 'cert.pem'), { encoding: 'utf-8' })
