@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Config } from '../src';
 
@@ -6,7 +6,11 @@ const config = new Config({
 	name: 'S0n1c\'s Site',
 	author: 'S0n1c',
 	desc: 'A test webclip',
-	id_prefix: 'ca.s0n1c.webclip'
+	id_prefix: 'ca.s0n1c.webclip',
+	signing: {
+		key: readFileSync(join(__dirname, 'key.pem'), { encoding: 'utf-8' }),
+		cert: readFileSync(join(__dirname, 'cert.pem'), { encoding: 'utf-8' })
+	}
 });
 
 config.webclips.add({
@@ -17,4 +21,6 @@ config.webclips.add({
 
 config.compile().then((data) => {
 	writeFileSync(join(__dirname, '..', 'app.mobileconfig'), data, { encoding: 'utf-8' });
+}).catch((e) => {
+	console.trace(e);
 });

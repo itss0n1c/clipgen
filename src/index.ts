@@ -17,12 +17,22 @@ export interface WebClip extends WebClipData {
 	icon: Uint8Array
 }
 
+export interface PackageData {
+	name: string
+	url: string
+	icon_path: string
+}
+
+export interface Package extends PackageData {
+	id: string
+}
+
 export interface SigningData {
 	key: string
 	cert: string
 }
 
-export interface ConfigInfo {
+export interface ConfigBase {
 	name: string
 	author: string
 	desc: string
@@ -48,13 +58,76 @@ export class WebClips extends BaseStore<string, WebClipData> {
 	}
 }
 
-export class Config implements ConfigInfo {
+export class Packages extends BaseStore<string, PackageData> {
+	add(data: PackageData): PackageData {
+		const id = this.genString();
+		this.set(id, data);
+		return this.get(id);
+	}
+
+	genString(length = 10): string {
+		var result = '';
+		var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		var charactersLength = characters.length;
+		for (var i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		}
+		return result;
+	}
+}
+
+export interface PackageKind {
+	kind: 'software-package'
+	url: string
+}
+
+export interface DisplayKind {
+	kind: 'display-image'
+	'needs-shine': boolean
+	url: string
+}
+
+export type assetKind = PackageKind | DisplayKind
+
+export interface AdHocPayload {
+	assets: assetKind[],
+	metadata: {
+		'bundle-identifier': string
+		'bundle-version': string
+		'kind': 'software'
+		'title': string
+	}
+}
+
+export type ConfigType = 'adhoc' | 'web'
+
+export interface ConfigWeb extends ConfigBase {
+	type: 'web'
+}
+
+export interface ConfigAdHoc extends ConfigBase {
+	type?: 'adhoc'
+}
+
+export type ConfigInfo = ConfigWeb | ConfigAdHoc;
+
+export class Config {
 	name: string;
 	author: string;
 	desc: string
 	id_prefix: `${string | ''}.${string}.${string}`
+	type?: ConfigType
 	signing?: SigningData
-	webclips: WebClips
+	webclips?: WebClips
+	packages: Packages
+
+	isWeb(): this is ConfigWeb {
+		return (this as ConfigWeb).type === 'web';
+	}
+
+	isAdHoc(): this is ConfigAdHoc {
+		return (this as ConfigAdHoc).type === 'adhoc';
+	}
 
 	constructor(data: ConfigInfo) {
 		this.name = data.name;
@@ -65,7 +138,17 @@ export class Config implements ConfigInfo {
 			this.signing = data.signing;
 		}
 
-		this.webclips = new WebClips();
+		if (typeof this.type === 'undefined') {
+			this.type = 'web';
+		}
+		switch (this.type) {
+			case 'adhoc':
+				this.packages = new Packages();
+				break;
+			case 'web':
+				this.webclips = new WebClips();
+				break;
+		}
 	}
 
 	isURL(url: string): boolean {
@@ -83,6 +166,49 @@ export class Config implements ConfigInfo {
 	}
 
 	async compile(): Promise<Buffer> {
+		switch (this.type) {
+			case 'adhoc':
+				return this.compileAdhoc();
+			case 'web':
+				return this.compileClip();
+		}
+	}
+
+	private async compileAdhoc(): Promise<Buffer> {
+		const app_uuid = v4().toUpperCase();
+		const PayloadContent: AdHocPayload[] = [];
+		if (typeof this.packages !== 'undefined' && this.packages.size > 0) {
+			for (const p of this.packages.array()) {
+				PayloadContent.push({
+					assets: [
+						{
+							kind: 'software-package',
+							url: p.url
+						},
+						{
+							kind: 'display-image',
+							'needs-shine': true,
+							url: p.icon_path
+						}
+					],
+					metadata: {
+						'bundle-identifier': `ca.s0n1c.clipgen.${app_uuid}`,
+						'bundle-version': '1',
+						kind: 'software',
+						title: p.name
+					}
+				});
+			}
+		}
+		const payload = {
+			items: PayloadContent
+		};
+
+		const res = build(payload as any);
+		return Buffer.from(res);
+	}
+
+	private async compileClip(): Promise<Buffer> {
 		const app_uuid = v4().toUpperCase();
 
 		const PayloadContent = [];
