@@ -20,7 +20,7 @@ export interface WebClip extends WebClipData {
 export interface PackageData {
 	name: string
 	url: string
-	icon_path: string
+	icon_path?: string
 }
 
 export interface Package extends PackageData {
@@ -174,16 +174,11 @@ export class Config {
 		const PayloadContent: AdHocPayload[] = [];
 		if (typeof this.packages !== 'undefined' && this.packages.size > 0) {
 			for (const p of this.packages.array()) {
-				PayloadContent.push({
+				const payload: AdHocPayload = {
 					assets: [
 						{
 							kind: 'software-package',
 							url: p.url
-						},
-						{
-							kind: 'display-image',
-							'needs-shine': true,
-							url: p.icon_path
 						}
 					],
 					metadata: {
@@ -192,7 +187,16 @@ export class Config {
 						kind: 'software',
 						title: p.name
 					}
-				});
+				};
+				if (typeof p.icon_path !== 'undefined') {
+					payload.assets.push({
+						kind: 'display-image',
+						'needs-shine': true,
+						url: p.icon_path
+					});
+				}
+
+				PayloadContent.push(payload);
 			}
 		}
 		const payload = {
