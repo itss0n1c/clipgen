@@ -19,7 +19,8 @@ config.webclips.add({
 });
 
 config.compile().then((data) => {
-	writeFileSync(join(__dirname, '..', 'app.mobileconfig'), data, { encoding: 'utf-8' });
+	const buf = Buffer.from(data);
+	writeFileSync(join(__dirname, '..', 'app.mobileconfig'), buf.toString(), { encoding: 'utf-8' });
 }).catch((e) => {
 	console.trace(e);
 });
