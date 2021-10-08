@@ -185,10 +185,10 @@ export class Config {
 		return new Promise((resolve, reject) => this.getSignedConfig(config, signing, (err, data) => err ? reject(err) : resolve(data)));
 	}
 
-	async compile(): Promise<Buffer> {
+	async compile(): Promise<ArrayBufferLike> {
 		switch (this.type) {
 			case 'adhoc':
-				return this.compileAdhoc();
+				return (await this.compileAdhoc()).buffer;
 			case 'web':
 				return this.compileClip();
 		}
@@ -232,7 +232,7 @@ export class Config {
 		return Buffer.from(res);
 	}
 
-	private async compileClip(): Promise<Buffer> {
+	private async compileClip(): Promise<ArrayBufferLike> {
 		const app_uuid = v4().toUpperCase();
 
 		const PayloadContent = [];
@@ -288,8 +288,16 @@ export class Config {
 		}
 
 		const res = build(payload as any);
+		let buf: Uint8Array;
+		if (this.isNode) {
+			const TE = (await import('util')).TextEncoder;
+			const enc = new TE();
+			buf = enc.encode(res);
+		} else {
+			const enc = new TextEncoder();
+			buf = enc.encode(res);
+		}
 
-		// console.log(res);
-		return Buffer.from(res);
+		return buf;
 	}
 }
