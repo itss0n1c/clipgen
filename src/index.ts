@@ -114,8 +114,7 @@ export type ConfigInfo = ConfigWeb | ConfigAdHoc;
 
 function isNode(): boolean {
 	// Check if the environment is Node.js
-	if (typeof process === 'object' &&
-        typeof require === 'function') {
+	if (typeof __dirname !== 'undefined' && typeof process === 'object') {
 		return true;
 	}
 
