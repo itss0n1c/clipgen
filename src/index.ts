@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { build } from 'plist';
+import * as plist from 'plist';
 import { URL } from 'url';
 import { v4 } from 'uuid';
 import BaseStore from './BaseStore';
@@ -134,6 +134,8 @@ export class Config {
 	getSignedConfig: (plistData: any, keys: {key: string, cert: string}, callback: (err: any, data: Buffer) => void) => void
 	isNode = isNode()
 	nodeFetch: any
+	build: typeof plist.build
+	parse: typeof plist.parse
 
 	isWeb(): this is ConfigWeb {
 		return (this as ConfigWeb).type === 'web';
@@ -153,6 +155,11 @@ export class Config {
 
 		if (this.isNode) {
 			this.initNode();
+		} else {
+			// eslint-disable-next-line no-undef
+			this.build = globalThis.plist.build;
+			// eslint-disable-next-line no-undef
+			this.parse = globalThis.plist.parse;
 		}
 		this.type = data.type || 'web';
 
@@ -169,6 +176,8 @@ export class Config {
 	async initNode(): Promise<void> {
 		this.getSignedConfig = (await import('mobileconfig')).default.getSignedConfig;
 		this.nodeFetch = (await import('node-fetch')).default;
+		this.build = plist.build;
+		this.parse = plist.parse;
 	}
 
 	isURL(url: string): boolean {
@@ -228,7 +237,7 @@ export class Config {
 			items: PayloadContent
 		};
 
-		const res = build(payload as any);
+		const res = this.build(payload as any);
 		return Buffer.from(res);
 	}
 
@@ -287,7 +296,7 @@ export class Config {
 			return this.signConfig(payload);
 		}
 
-		const res = build(payload as any);
+		const res = this.build(payload as any);
 		let buf: Uint8Array;
 		if (this.isNode) {
 			const TE = (await import('util')).TextEncoder;
