@@ -151,7 +151,7 @@ export class Config {
 		if (typeof data.signing !== 'undefined') {
 			this.signing = data.signing;
 		}
-
+		console.log(this.isNode ? 'Running clipgen on NodeJS' : 'Running clipgen in Browser');
 		if (this.isNode) {
 			this.initNode();
 		} else {
