@@ -181,7 +181,7 @@ export class Config {
 	}
 
 	isURL(url: string): boolean {
-		if (url.startsWith('data:image')) {
+		if (url.startsWith('data:image') || url.startsWith('blob:')) {
 			return true;
 		}
 		try {
