@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import BaseStore from './BaseStore';
 
 export interface WebClipData {
+	id?: string
 	name: string
 	url: string
 	icon_path: string
@@ -18,6 +19,7 @@ export interface WebClip extends WebClipData {
 }
 
 export interface PackageData {
+	id?: string
 	name: string
 	url: string
 	icon_path?: string
@@ -42,6 +44,7 @@ export interface ConfigBase {
 export class WebClips extends BaseStore<string, WebClipData> {
 	add(data: WebClipData): WebClipData {
 		const id = this.genString();
+		data.id = id;
 		this.set(id, data);
 		return this.get(id);
 	}
@@ -60,6 +63,7 @@ export class WebClips extends BaseStore<string, WebClipData> {
 export class Packages extends BaseStore<string, PackageData> {
 	add(data: PackageData): PackageData {
 		const id = this.genString();
+		data.id = id;
 		this.set(id, data);
 		return this.get(id);
 	}
