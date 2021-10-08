@@ -181,6 +181,9 @@ export class Config {
 	}
 
 	isURL(url: string): boolean {
+		if (url.startsWith('data:image')) {
+			return true;
+		}
 		try {
 			new URL(url);
 		} catch (e) {
