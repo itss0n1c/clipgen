@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from 'fs';
-import { getSignedConfig } from 'mobileconfig';
 import fetch from 'node-fetch';
 import { build } from 'plist';
 import { URL } from 'url';
@@ -114,6 +113,16 @@ export interface ConfigAdHoc extends ConfigBase {
 
 export type ConfigInfo = ConfigWeb | ConfigAdHoc;
 
+function isNode(): boolean {
+	// Check if the environment is Node.js
+	if (typeof process === 'object' &&
+        typeof require === 'function') {
+		return true;
+	}
+
+	return false;
+}
+
 export class Config {
 	name: string;
 	author: string;
@@ -122,6 +131,8 @@ export class Config {
 	signing?: SigningData
 	webclips?: WebClips
 	packages: Packages
+	// eslint-disable-next-line no-unused-vars
+	getSignedConfig: (plistData: any, keys: {key: string, cert: string}, callback: (err: any, data: Buffer) => void) => void
 
 	isWeb(): this is ConfigWeb {
 		return (this as ConfigWeb).type === 'web';
@@ -138,6 +149,10 @@ export class Config {
 		if (typeof data.signing !== 'undefined') {
 			this.signing = data.signing;
 		}
+
+		if (isNode()) {
+			this.initMC();
+		}
 		this.type = data.type || 'web';
 
 		switch (this.type) {
@@ -148,6 +163,10 @@ export class Config {
 				this.webclips = new WebClips();
 				break;
 		}
+	}
+
+	async initMC(): Promise<void> {
+		this.getSignedConfig = (await import('mobileconfig')).default.getSignedConfig;
 	}
 
 	isURL(url: string): boolean {
@@ -161,7 +180,7 @@ export class Config {
 
 	async signConfig(config: unknown): Promise<Buffer> {
 		const { signing } = this;
-		return new Promise((resolve, reject) => getSignedConfig(config, signing, (err, data) => err ? reject(err) : resolve(data)));
+		return new Promise((resolve, reject) => this.getSignedConfig(config, signing, (err, data) => err ? reject(err) : resolve(data)));
 	}
 
 	async compile(): Promise<Buffer> {
