@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from 'fs';
-import fetch from 'node-fetch';
 import { build } from 'plist';
 import { URL } from 'url';
 import { v4 } from 'uuid';
@@ -133,6 +132,8 @@ export class Config {
 	packages: Packages
 	// eslint-disable-next-line no-unused-vars
 	getSignedConfig: (plistData: any, keys: {key: string, cert: string}, callback: (err: any, data: Buffer) => void) => void
+	isNode = isNode()
+	nodeFetch: any
 
 	isWeb(): this is ConfigWeb {
 		return (this as ConfigWeb).type === 'web';
@@ -150,8 +151,8 @@ export class Config {
 			this.signing = data.signing;
 		}
 
-		if (isNode()) {
-			this.initMC();
+		if (this.isNode) {
+			this.initNode();
 		}
 		this.type = data.type || 'web';
 
@@ -165,8 +166,9 @@ export class Config {
 		}
 	}
 
-	async initMC(): Promise<void> {
+	async initNode(): Promise<void> {
 		this.getSignedConfig = (await import('mobileconfig')).default.getSignedConfig;
+		this.nodeFetch = (await import('node-fetch')).default;
 	}
 
 	isURL(url: string): boolean {
@@ -245,8 +247,13 @@ export class Config {
 					const rawIcon = readFileSync(p.icon_path);
 					icondata = new Uint8Array(rawIcon.buffer);
 				} else {
-					const rawIcon = await fetch(p.icon_path).then(r => r.buffer());
-					icondata = new Uint8Array(rawIcon.buffer);
+					let rawIcon: ArrayBufferLike;
+					if (this.isNode) {
+						rawIcon = await (await this.nodeFetch(p.icon_path)).buffer();
+					} else {
+						rawIcon = await (await fetch(p.icon_path)).arrayBuffer();
+					}
+					icondata = new Uint8Array(rawIcon);
 				}
 				const payload_uuid = v4().toUpperCase();
 				PayloadContent.push({
