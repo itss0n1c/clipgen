@@ -1,6 +1,6 @@
-import { existsSync, readFileSync } from 'fs';
+
 import * as plist from 'plist';
-import { URL } from 'url';
+
 import { v4 } from 'uuid';
 import BaseStore from './BaseStore';
 
@@ -132,9 +132,11 @@ export class Config {
 	// eslint-disable-next-line no-unused-vars
 	getSignedConfig: (plistData: any, keys: {key: string, cert: string}, callback: (err: any, data: Buffer) => void) => void
 	isNode = isNode()
-	nodeFetch: any
-	build: typeof plist.build
-	parse: typeof plist.parse
+	private nodeFetch: any
+	private build: typeof plist.build
+	private parse: typeof plist.parse
+	private fs: any
+	private URL: any
 
 	isWeb(): this is ConfigWeb {
 		return (this as ConfigWeb).type === 'web';
@@ -177,6 +179,8 @@ export class Config {
 		this.nodeFetch = (await import('node-fetch')).default;
 		this.build = plist.build;
 		this.parse = plist.parse;
+		this.fs = (await import('fs')).default;
+		this.URL = (await import('url')).default.URL;
 	}
 
 	isURL(url: string): boolean {
@@ -184,7 +188,11 @@ export class Config {
 			return true;
 		}
 		try {
-			new URL(url);
+			if (this.isNode) {
+				new this.URL(url);
+			} else {
+				new URL(url);
+			}
 		} catch (e) {
 			return false;
 		}
@@ -252,10 +260,10 @@ export class Config {
 			for (const p of this.webclips.array()) {
 				let icondata: Uint8Array;
 				if (!this.isURL(p.icon_path)) {
-					if (!existsSync(p.icon_path)) {
+					if (!this.fs.existsSync(p.icon_path)) {
 						throw new Error('Icon path invalid.');
 					}
-					const rawIcon = readFileSync(p.icon_path);
+					const rawIcon = this.fs.readFileSync(p.icon_path);
 					icondata = new Uint8Array(rawIcon.buffer);
 				} else {
 					let rawIcon: ArrayBufferLike;
