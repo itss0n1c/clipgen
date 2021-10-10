@@ -3,7 +3,7 @@
 		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"lib": ["ES2020", "DOM"],
-		"module": "ESNext",
+		"module": "CommonJS",
 		"moduleResolution": "Node",
 		"outDir": "dist/",
 		"resolveJsonModule": true,
