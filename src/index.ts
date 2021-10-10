@@ -1,4 +1,4 @@
-import * as plist from 'plist';
+import plist from 'plist';
 import { Config, ConfigInfo } from './Config';
 
 function isNode(): boolean {
