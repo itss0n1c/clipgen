@@ -1,4 +1,3 @@
-import plist from 'plist';
 import { Config, ConfigInfo } from './Config';
 
 function isNode(): boolean {
@@ -15,8 +14,8 @@ export default class Clipgen {
 		// eslint-disable-next-line no-unused-vars
 		getSignedConfig?: (plistData: any, keys: {key: string, cert: string}, callback: (err: any, data: Buffer) => void) => void
 		fs?: any
-		build?: typeof plist.build
-		parse?: typeof plist.parse
+		build?: any
+		parse?: any
 		URL?: any
 		fetch?: any
 	} = {}
@@ -38,8 +37,8 @@ export default class Clipgen {
 	async initNode(): Promise<void> {
 		this.mod.getSignedConfig = (await import('mobileconfig')).default.getSignedConfig;
 		this.mod.fetch = (await import('node-fetch')).default;
-		this.mod.build = plist.build;
-		this.mod.parse = plist.parse;
+		this.mod.build = (await import('plist')).build;
+		this.mod.parse = (await import('plist')).parse;
 		this.mod.fs = (await import('fs')).default;
 		this.mod.URL = (await import('url')).default.URL;
 	}

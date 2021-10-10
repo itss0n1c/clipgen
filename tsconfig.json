@@ -8,7 +8,7 @@
 		"outDir": "dist/",
 		"resolveJsonModule": true,
 		"rootDir": "src/",
-		"target": "es2017",
+		"target": "ES2017",
 		"downlevelIteration": true,
 		"esModuleInterop": true
 	},
