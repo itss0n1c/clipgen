@@ -1,26 +1,25 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { writeFile } from 'fs/promises';
 import { join } from 'path';
-import { Config } from '../src';
+import Clipgen from '../src';
 
-const config = new Config({
-	name: 'S0n1c\'s Site',
-	author: 'S0n1c',
-	desc: 'A test webclip',
-	signing: {
-		key: readFileSync(join(__dirname, 'key.pem'), { encoding: 'utf-8' }),
-		cert: readFileSync(join(__dirname, 'cert.pem'), { encoding: 'utf-8' })
-	}
-});
+const clipgen = new Clipgen();
+(async () => {
+	await clipgen.init();
 
-config.webclips.add({
-	name: 'S0n1c',
-	url: 'https://s0n1c.ca',
-	icon_path: 'https://s0n1c.ca/me.png'
-});
+	const config = clipgen.createConfig({
+		name: 'S0n1c\'s Site',
+		author: 'S0n1c',
+		desc: 'A test webclip'
+	});
 
-config.compile().then((data) => {
+	config.webclips.add({
+		name: 'S0n1c',
+		url: 'https://s0n1c.ca',
+		icon_path: 'https://s0n1c.ca/me.png'
+	});
+
+	const data = await config.compile();
 	const buf = Buffer.from(data);
-	writeFileSync(join(__dirname, '..', 'app.mobileconfig'), buf.toString(), { encoding: 'utf-8' });
-}).catch((e) => {
-	console.trace(e);
-});
+	await writeFile(join(__dirname, 'app.mobileconfig'), buf.toString(), { encoding: 'utf-8' });
+})();
+
