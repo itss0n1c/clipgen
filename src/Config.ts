@@ -181,13 +181,13 @@ export class Config {
 	async compile(): Promise<ArrayBufferLike> {
 		switch (this.type) {
 			case 'adhoc':
-				return (await this.compileAdhoc()).buffer;
+				return this.compileAdhoc();
 			case 'web':
 				return this.compileClip();
 		}
 	}
 
-	private async compileAdhoc(): Promise<Buffer> {
+	private async compileAdhoc(): Promise<ArrayBufferLike> {
 		const app_uuid = v4().toUpperCase();
 		const PayloadContent: AdHocPayload[] = [];
 		if (typeof this.packages !== 'undefined' && this.packages.size > 0) {
@@ -221,8 +221,17 @@ export class Config {
 			items: PayloadContent
 		};
 
-		const res = this.inst.mod.build(payload as any);
-		return Buffer.from(res);
+		const res = this.inst.mod.build(payload as any) as string;
+		let buf: Uint8Array;
+		if (this.inst.isNode) {
+			const TE = (await import('util')).TextEncoder;
+			const enc = new TE();
+			buf = enc.encode(res);
+		} else {
+			const enc = new TextEncoder();
+			buf = enc.encode(res);
+		}
+		return buf;
 	}
 
 	private async compileClip(): Promise<ArrayBufferLike> {
