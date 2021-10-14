@@ -94,6 +94,7 @@ export interface AdHocPayload {
 		'bundle-identifier': string
 		'bundle-version': string
 		'kind': 'software'
+		'platform-identifier': 'com.apple.platform.iphoneos'
 		'title': string
 	}
 }
@@ -203,6 +204,7 @@ export class Config {
 						'bundle-identifier': `ca.s0n1c.clipgen.${app_uuid}`,
 						'bundle-version': '1',
 						kind: 'software',
+						'platform-identifier': 'com.apple.platform.iphoneos',
 						title: p.name
 					}
 				};
