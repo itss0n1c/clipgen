@@ -19,6 +19,7 @@ export interface PackageData {
 	name: string
 	url: string
 	icon_path?: string
+	bundleid?: string
 }
 
 export interface Package extends PackageData {
@@ -201,7 +202,7 @@ export class Config {
 						}
 					],
 					metadata: {
-						'bundle-identifier': `ca.s0n1c.clipgen.${app_uuid}`,
+						'bundle-identifier': p.bundleid ?? `ca.s0n1c.clipgen.${app_uuid}`,
 						'bundle-version': '1',
 						kind: 'software',
 						'platform-identifier': 'com.apple.platform.iphoneos',
