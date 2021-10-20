@@ -82,7 +82,7 @@ export interface PackageKind {
 }
 
 export interface DisplayKind {
-	kind: 'display-image'
+	kind: 'display-image' | 'full-size-image'
 	'needs-shine': boolean
 	url: string
 }
@@ -203,7 +203,7 @@ export class Config {
 					],
 					metadata: {
 						'bundle-identifier': p.bundleid ?? `ca.s0n1c.clipgen.${app_uuid}`,
-						'bundle-version': '1',
+						'bundle-version': '1.0',
 						kind: 'software',
 						'platform-identifier': 'com.apple.platform.iphoneos',
 						title: p.name
@@ -212,6 +212,10 @@ export class Config {
 				if (typeof p.icon_path !== 'undefined') {
 					payload.assets.push({
 						kind: 'display-image',
+						'needs-shine': true,
+						url: p.icon_path
+					}, {
+						kind: 'full-size-image',
 						'needs-shine': true,
 						url: p.icon_path
 					});
