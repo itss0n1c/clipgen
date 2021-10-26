@@ -249,20 +249,24 @@ export class Config {
 		if (typeof this.webclips !== 'undefined' && this.webclips.size > 0) {
 			for (const p of this.webclips.array()) {
 				let icondata: Uint8Array;
-				if (!this.isURL(p.icon_path)) {
-					if (!this.inst.mod.fs.existsSync(p.icon_path)) {
-						throw new Error('Icon path invalid.');
-					}
-					const rawIcon = this.inst.mod.fs.readFileSync(p.icon_path);
-					icondata = new Uint8Array(rawIcon.buffer);
+				if (this.inst.isNode) {
+					icondata = new Uint8Array(Buffer.from(p.icon_path, 'base64').buffer);
 				} else {
-					let rawIcon: ArrayBufferLike;
-					if (this.inst.isNode) {
-						rawIcon = await (await this.inst.mod.fetch(p.icon_path)).buffer();
+					if (!this.isURL(p.icon_path)) {
+						if (!this.inst.mod.fs.existsSync(p.icon_path)) {
+							throw new Error('Icon path invalid.');
+						}
+						const rawIcon = this.inst.mod.fs.readFileSync(p.icon_path);
+						icondata = new Uint8Array(rawIcon.buffer);
 					} else {
-						rawIcon = await (await fetch(p.icon_path)).arrayBuffer();
+						let rawIcon: ArrayBufferLike;
+						if (this.inst.isNode) {
+							rawIcon = await (await this.inst.mod.fetch(p.icon_path)).buffer();
+						} else {
+							rawIcon = await (await fetch(p.icon_path)).arrayBuffer();
+						}
+						icondata = new Uint8Array(rawIcon);
 					}
-					icondata = new Uint8Array(rawIcon);
 				}
 				const payload_uuid = v4().toUpperCase();
 				PayloadContent.push({

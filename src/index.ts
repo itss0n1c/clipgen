@@ -1,7 +1,12 @@
 import { Config, ConfigInfo } from './Config';
 
-export interface ClipgenOpts {
-	node: boolean
+function isNode(): boolean {
+	// Check if the environment is Node.js
+	if (typeof __dirname !== 'undefined' && typeof process === 'object') {
+		return true;
+	}
+
+	return false;
 }
 
 export default class Clipgen {
@@ -15,12 +20,7 @@ export default class Clipgen {
 		fetch?: any
 	} = {}
 
-	isNode: boolean
-
-	constructor(opts?: Partial<ClipgenOpts>) {
-		this.isNode = typeof opts !== 'undefined' ? opts.node ?? false : false;
-	}
-
+	isNode = isNode()
 
 	async init(): Promise<void> {
 		if (this.isNode) {
