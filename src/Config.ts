@@ -6,7 +6,7 @@ export interface WebClipData {
 	id?: string
 	name: string
 	url: string
-	icon_path: string | ArrayBuffer
+	icon_path: string | ArrayBufferLike
 }
 
 export interface WebClip extends WebClipData {
@@ -252,6 +252,7 @@ export class Config {
 				if (typeof p.icon_path === 'string' && this.inst.isNode) {
 					icondata = new Uint8Array(Buffer.from(p.icon_path, 'base64').buffer);
 				} else {
+					console.log(typeof p.icon_path);
 					if (typeof p.icon_path === 'string') {
 						if (!this.isURL(p.icon_path)) {
 							if (!this.inst.mod.fs.existsSync(p.icon_path)) {
