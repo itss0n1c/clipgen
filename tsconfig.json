@@ -10,7 +10,8 @@
 		"rootDir": "src/",
 		"target": "ES2017",
 		"downlevelIteration": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"strict": false
 	},
 	"exclude": ["tests/", "dist/"]
 }

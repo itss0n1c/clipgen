@@ -12,15 +12,15 @@ function isNode(): boolean {
 export default class Clipgen {
 	mod: {
 		// eslint-disable-next-line no-unused-vars
-		getSignedConfig?: (plistData: any, keys: {key: string, cert: string}, callback: (err: any, data: Buffer) => void) => void
-		fs?: any
-		build?: any
-		parse?: any
-		URL?: any
-		fetch?: any
-	} = {}
+		getSignedConfig?: (plistData: any, keys: { key: string; cert: string }, callback: (err: any, data: Buffer) => void) => void;
+		fs?: any;
+		build?: any;
+		parse?: any;
+		URL?: any;
+		fetch?: any;
+	} = {};
 
-	isNode = isNode()
+	isNode = isNode();
 
 	async init(): Promise<void> {
 		if (this.isNode) {

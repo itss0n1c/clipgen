@@ -22,4 +22,3 @@ const clipgen = new Clipgen();
 	const buf = Buffer.from(data);
 	await writeFile(join(__dirname, 'app.mobileconfig'), buf.toString(), { encoding: 'utf-8' });
 })();
-

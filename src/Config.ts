@@ -1,44 +1,43 @@
 import { v4 } from 'uuid';
 import Clipgen from '.';
-import BaseStore from './BaseStore';
 
 export interface WebClipData {
-	id?: string
-	name: string
-	url: string
-	icon_path: string | ArrayBufferLike
+	id?: string;
+	name: string;
+	url: string;
+	icon_path: string | ArrayBufferLike;
 }
 
 export interface WebClip extends WebClipData {
-	id: string
-	icon: Uint8Array
+	id: string;
+	icon: Uint8Array;
 }
 
 export interface PackageData {
-	id?: string
-	name: string
-	url: string
-	icon_path?: string
-	bundleid?: string
+	id?: string;
+	name: string;
+	url: string;
+	icon_path?: string;
+	bundleid?: string;
 }
 
 export interface Package extends PackageData {
-	id: string
+	id: string;
 }
 
 export interface SigningData {
-	key: string
-	cert: string
+	key: string;
+	cert: string;
 }
 
 export interface ConfigBase {
-	name: string
-	author: string
-	desc: string
-	signing?: SigningData
+	name: string;
+	author: string;
+	desc: string;
+	signing?: SigningData;
 }
 
-export class WebClips extends BaseStore<string, WebClipData> {
+export class WebClips extends Map<string, WebClipData> {
 	add(data: WebClipData): WebClipData {
 		const id = this.genString();
 		data.id = id;
@@ -57,7 +56,7 @@ export class WebClips extends BaseStore<string, WebClipData> {
 	}
 }
 
-export class Packages extends BaseStore<string, PackageData> {
+export class Packages extends Map<string, PackageData> {
 	add(data: PackageData): PackageData {
 		const id = this.genString();
 		data.id = id;
@@ -77,54 +76,52 @@ export class Packages extends BaseStore<string, PackageData> {
 }
 
 export interface PackageKind {
-	kind: 'software-package'
-	url: string
+	kind: 'software-package';
+	url: string;
 }
 
 export interface DisplayKind {
-	kind: 'display-image' | 'full-size-image'
-	'needs-shine': boolean
-	url: string
+	kind: 'display-image' | 'full-size-image';
+	'needs-shine': boolean;
+	url: string;
 }
 
-export type assetKind = PackageKind | DisplayKind
+export type assetKind = PackageKind | DisplayKind;
 
 export interface AdHocPayload {
-	assets: assetKind[],
+	assets: assetKind[];
 	metadata: {
-		'bundle-identifier': string
-		'bundle-version': string
-		'kind': 'software'
-		'platform-identifier': 'com.apple.platform.iphoneos'
-		'title': string
-	}
+		'bundle-identifier': string;
+		'bundle-version': string;
+		kind: 'software';
+		'platform-identifier': 'com.apple.platform.iphoneos';
+		title: string;
+	};
 }
 
-export type ConfigType = 'adhoc' | 'web'
+export type ConfigType = 'adhoc' | 'web';
 
 export interface ConfigWeb extends ConfigBase {
-	type: 'web'
+	type: 'web';
 }
 
 export interface ConfigAdHoc extends ConfigBase {
-	type?: 'adhoc'
+	type?: 'adhoc';
 }
 
 export type ConfigInfo = ConfigWeb | ConfigAdHoc;
 
-
 export class Config {
 	name: string;
 	author: string;
-	desc: string
-	type?: ConfigType
-	signing?: SigningData
-	webclips?: WebClips
-	packages: Packages
+	desc: string;
+	type?: ConfigType;
+	signing?: SigningData;
+	webclips = new WebClips();
+	packages = new Packages();
 	// eslint-disable-next-line no-unused-vars
 
-
-	private inst: Clipgen
+	private inst: Clipgen;
 	isWeb(): this is ConfigWeb {
 		return (this as ConfigWeb).type === 'web';
 	}
@@ -147,17 +144,7 @@ export class Config {
 		}
 
 		this.type = data.type || 'web';
-
-		switch (this.type) {
-			case 'adhoc':
-				this.packages = new Packages();
-				break;
-			case 'web':
-				this.webclips = new WebClips();
-				break;
-		}
 	}
-
 
 	isURL(url: string): boolean {
 		if (url.startsWith('data:image') || url.startsWith('blob:')) {
@@ -177,7 +164,7 @@ export class Config {
 
 	async signConfig(config: unknown): Promise<Buffer> {
 		const { signing } = this;
-		return new Promise((resolve, reject) => this.inst.mod.getSignedConfig(config, signing, (err, data) => err ? reject(err) : resolve(data)));
+		return new Promise((resolve, reject) => this.inst.mod.getSignedConfig(config, signing, (err, data) => (err ? reject(err) : resolve(data))));
 	}
 
 	async compile(): Promise<ArrayBufferLike> {
@@ -193,7 +180,7 @@ export class Config {
 		const app_uuid = v4().toUpperCase();
 		const PayloadContent: AdHocPayload[] = [];
 		if (typeof this.packages !== 'undefined' && this.packages.size > 0) {
-			for (const p of this.packages.array()) {
+			for (const p of this.packages.values()) {
 				const payload: AdHocPayload = {
 					assets: [
 						{
@@ -210,15 +197,18 @@ export class Config {
 					}
 				};
 				if (typeof p.icon_path !== 'undefined') {
-					payload.assets.push({
-						kind: 'display-image',
-						'needs-shine': true,
-						url: p.icon_path
-					}, {
-						kind: 'full-size-image',
-						'needs-shine': true,
-						url: p.icon_path
-					});
+					payload.assets.push(
+						{
+							kind: 'display-image',
+							'needs-shine': true,
+							url: p.icon_path
+						},
+						{
+							kind: 'full-size-image',
+							'needs-shine': true,
+							url: p.icon_path
+						}
+					);
 				}
 
 				PayloadContent.push(payload);
@@ -247,7 +237,7 @@ export class Config {
 		const PayloadContent = [];
 
 		if (typeof this.webclips !== 'undefined' && this.webclips.size > 0) {
-			for (const p of this.webclips.array()) {
+			for (const p of this.webclips.values()) {
 				let icondata: Uint8Array;
 				if (typeof p.icon_path === 'string' && this.inst.isNode) {
 					icondata = new Uint8Array(Buffer.from(p.icon_path, 'base64').buffer);
