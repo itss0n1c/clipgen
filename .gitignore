@@ -2,3 +2,4 @@
 /dist
 /.yarn/cache
 /.yarn/install-state.gz
+/tests

@@ -2,7 +2,7 @@
 	"root": true,
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
-		"ecmaVersion": 2020,
+		"ecmaVersion": 2022,
 		"sourceType": "module"
 	},
 	"plugins": ["@typescript-eslint"],
@@ -133,7 +133,7 @@
 		"yoda": ["error"],
 		"no-delete-var": ["error"],
 		"no-shadow-restricted-names": ["error"],
-		"no-undef": ["error"],
+		"no-undef": "off",
 		"no-undef-init": ["error"],
 		"no-undefined": ["error"],
 		"no-unused-vars": ["error"],

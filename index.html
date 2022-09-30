@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Clipgen Testing</title>
+	<style>
+		iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+
+	</style>
+</head>
+
+<body>
+
+	<script src="https://cdn.jsdelivr.net/npm/plist@3.0.6/dist/plist.js"></script>
+	<script type="module">
+		import { Config } from "/lib/index.ts";
+
+		let config = await Config.render({
+			type: 'web',
+			name: "S0n1c's Site",
+			author: 'S0n1c',
+			desc: 'A test webclip',
+			clips: [
+				{
+					name: 'S0n1c',
+					url: 'https://s0n1c.ca',
+					icon: new URL('https://s0n1c.ca/me.png'), // or an ArrayBufferLike
+				},
+			]
+		});
+
+		console.log(config);
+		let blob = new Blob([config], { type: 'text/plain' });
+		let url = URL.createObjectURL(blob);
+
+		let iframe = document.createElement('iframe');
+		iframe.src = url;
+		document.body.appendChild(iframe);
+
+
+	</script>
+</body>
+
+</html>
