@@ -149,6 +149,7 @@ export class Config {
 					url: item.icon
 				});
 			}
+			config.items.push(payload);
 		}
 		const res = await this.build(config as any);
 		const buf = new TextEncoder();
