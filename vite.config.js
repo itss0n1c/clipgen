@@ -7,7 +7,8 @@ export default defineConfig({
 		lib: {
 			entry: resolve(__dirname, 'lib/index.ts'),
 			name: 'Clipgen',
-			fileName: 'index'
+			fileName: 'index',
+			formats: [ 'es' ]
 		},
 		sourcemap: 'inline',
 		rollupOptions: {

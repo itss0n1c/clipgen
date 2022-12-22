@@ -1,6 +1,6 @@
 {
 	"name": "clipgen",
-	"version": "2.0.3",
+	"version": "2.1.0",
 	"description": "A webclip and adhoc generator.",
 	"type": "module",
 	"repository": {
@@ -23,16 +23,7 @@
 	},
 	"homepage": "https://github.com/itss0n1c/clipgen#readme",
 	"types": "./dist/index.d.ts",
-	"main": "./dist/index.umd.cjs",
-	"module": "./dist/index.js",
-	"browser": "./dist/index.js",
-	"exports": {
-		"*": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
-			"default": "./dist/index.js"
-		}
-	},
+	"main": "./dist/index.js",
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
