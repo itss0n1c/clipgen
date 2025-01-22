@@ -1,6 +1,6 @@
 {
 	"name": "clipgen",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "A web clip and adhoc config generator.",
 	"keywords": ["ios", "webclip", "adhoc", "generator"],
 	"license": "MIT",
