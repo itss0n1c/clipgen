@@ -5,7 +5,7 @@ A web clip and adhoc config generator.
 ## Installation
 
 ```bash
-$ yarn add clipgen
+$ bun i clipgen
 ```
 
 ## Usage
@@ -13,9 +13,9 @@ $ yarn add clipgen
 For webclips:
 
 ```ts
-import { Config } from 'clipgen';
+import { generate } from 'clipgen';
 
-const config = await Config.render({
+const config = await generate({
 	type: 'web',
 	name: "S0n1c's Site",
 	author: 'S0n1c',
@@ -26,12 +26,7 @@ const config = await Config.render({
 			url: 'https://s0n1c.ca',
 			icon: new URL('https://s0n1c.ca/me.png'), // or an ArrayBufferLike
 		},
-	],
-	signing: {
-		// Optional, only available using Node.js
-		cert: '-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----',
-		key: '-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----',
-	},
+	]
 });
 
 console.log(config); // outputs the generated config as an ArrayBuffer
@@ -40,9 +35,9 @@ console.log(config); // outputs the generated config as an ArrayBuffer
 For adhoc configs:
 
 ```ts
-import { Config } from 'clipgen';
+import { generate } from 'clipgen';
 
-let config = await Config.render({
+let config = await generate({
 	type: 'adhoc',
 	items: [
 		{

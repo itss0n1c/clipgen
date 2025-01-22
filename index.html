@@ -17,17 +17,14 @@
 			height: 100%;
 			border: none;
 		}
-
 	</style>
 </head>
 
 <body>
-
-	<script src="https://cdn.jsdelivr.net/npm/plist@3.0.6/dist/plist.js"></script>
 	<script type="module">
-		import { Config } from "/lib/index.ts";
+		import { generate } from "/lib/index.ts";
 
-		let config = await Config.render({
+		let config = await generate({
 			type: 'web',
 			name: "S0n1c's Site",
 			author: 'S0n1c',

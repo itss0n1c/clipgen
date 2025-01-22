@@ -1,19 +1,21 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+import { resolve } from "node:path";
+import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
+	server: {
+		host: true,
+	},
 	build: {
 		lib: {
-			entry: resolve(__dirname, 'lib/index.ts'),
-			name: 'Clipgen',
-			fileName: 'index',
-			formats: [ 'es' ]
+			entry: resolve(__dirname, "lib/index.ts"),
+			name: "Clipgen",
+			fileName: "index",
 		},
-		sourcemap: 'inline',
+		sourcemap: "inline",
 		rollupOptions: {
-			external: [ 'plist', 'crypto', 'mobileconfig' ]
-		}
+			external: ["@plist/plist", "crypto", "mobileconfig"],
+		},
 	},
-	plugins: [ dts() ]
+	plugins: [dts()],
 });

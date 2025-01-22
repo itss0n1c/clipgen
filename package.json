@@ -1,48 +1,44 @@
 {
 	"name": "clipgen",
-	"version": "2.1.0",
-	"description": "A webclip and adhoc generator.",
-	"type": "module",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/itss0n1c/clipgen.git"
-	},
-	"keywords": [
-		"ios",
-		"webclip",
-		"adhoc",
-		"generator"
-	],
-	"files": [
-		"dist"
-	],
+	"version": "3.0.0",
+	"description": "A web clip and adhoc config generator.",
+	"keywords": ["ios", "webclip", "adhoc", "generator"],
 	"license": "MIT",
-	"author": "S0n1c",
-	"bugs": {
-		"url": "https://github.com/itss0n1c/clipgen/issues"
-	},
-	"homepage": "https://github.com/itss0n1c/clipgen#readme",
+	"type": "module",
+	"files": ["dist"],
 	"types": "./dist/index.d.ts",
-	"main": "./dist/index.js",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.js",
+	"browser": "./dist/index.js",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.umd.cjs"
+		}
+	},
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc && vite build",
+		"build:docs": "typedoc --options typedoc.json",
+		"build": "tsc && vite build && bun run build:docs",
 		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@types/node": "^18.7.23",
-		"@types/plist": "^3.0.2",
-		"@typescript-eslint/eslint-plugin": "^5.38.1",
-		"@typescript-eslint/parser": "^5.38.1",
-		"eslint": "^8.24.0",
-		"typescript": "^4.8.4",
-		"vite": "^3.1.4",
-		"vite-plugin-dts": "^1.6.4"
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "22.10.7",
+		"typedoc-github-theme": "^0.2.1",
+		"typescript": "5.7.3",
+		"vite": "6.0.11",
+		"vite-plugin-dts": "4.5.0"
 	},
 	"dependencies": {
-		"jsrsasign": "^10.5.27",
-		"mobileconfig": "^2.4.0",
-		"plist": "^3.0.6"
+		"@plist/plist": "1.0.0"
 	},
-	"packageManager": "yarn@3.2.3"
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/itss0n1c/clipgen.git"
+	},
+	"bugs": {
+		"url": "https://github.com/itss0n1c/clipgen/issues"
+	},
+	"homepage": "https://s0n1c.ca/clipgen"
 }
