@@ -1,10 +1,8 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-	"organizeImports": {
-		"enabled": false
-	},
+	"$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"files": {
-		"ignore": ["dist/*", "node_modules/*", "docs/*"]
+		"includes": ["**", "!!dist", "!!docs", "!!test", "!!**/*.js", "!!node_modules"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -20,7 +18,18 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"suspicious": {
+				"noAssignInExpressions": "off"
+			},
+			"correctness": {
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error"
+			},
+			"style": {
+				"noParameterAssign": "off",
+				"useExportType": "error"
+			}
 		}
 	}
 }

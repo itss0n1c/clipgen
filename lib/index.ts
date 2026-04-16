@@ -111,7 +111,7 @@ async function _generate_web(data: ClipgenWebclipBuildParams) {
  * @throws {ClipgenError} If the build type is invalid.
  * @returns The configuration profile as a buffer.
  */
-export async function generate(data: ClipgenBuildParams): Promise<ArrayBufferLike> {
+export async function generate(data: ClipgenBuildParams): Promise<Uint8Array<ArrayBuffer>> {
 	if (data.type === 'adhoc') return _generate_adhoc(data);
 	if (data.type === 'web') return _generate_web(data);
 	throw new ClipgenError('Invalid build type.');
