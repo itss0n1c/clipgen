@@ -1,6 +1,6 @@
 {
 	"name": "clipgen",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"description": "Generate iOS Web Clip profiles and ad hoc installation manifests.",
 	"keywords": [
 		"ios",
