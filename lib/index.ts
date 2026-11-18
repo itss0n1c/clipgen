@@ -15,12 +15,14 @@ export class ClipgenError extends Error {
 	}
 }
 
-const _get_icon = (icon: URL | ArrayBufferLike) =>
-	icon instanceof URL
-		? fetch(icon)
-				.then((r) => r.arrayBuffer())
-				.then((r) => new Uint8Array(r))
-		: new Uint8Array(icon);
+async function _get_icon(icon: URL | ArrayBufferLike) {
+	if (!(icon instanceof URL)) return new Uint8Array(icon);
+
+	const response = await fetch(icon);
+	if (!response.ok) throw new ClipgenError(`Icon download failed (HTTP ${response.status}).`);
+
+	return new Uint8Array(await response.arrayBuffer());
+}
 
 const gen_uuid = () => crypto.randomUUID().toUpperCase();
 
@@ -108,8 +110,8 @@ async function _generate_web(data: ClipgenWebclipBuildParams) {
 /**
  * Generate a configuration profile.
  *
- * @throws {ClipgenError} If the build type is invalid.
- * @returns The configuration profile as a buffer.
+ * @throws {ClipgenError} If the build type is invalid or an icon download returns an unsuccessful HTTP status.
+ * @returns The generated plist as a Uint8Array.
  */
 export async function generate(data: ClipgenBuildParams): Promise<Uint8Array<ArrayBuffer>> {
 	if (data.type === 'adhoc') return _generate_adhoc(data);
