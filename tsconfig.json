@@ -1,18 +1,16 @@
 {
-    "compilerOptions": {
-        "noEmit": true,
-        "forceConsistentCasingInFileNames": true,
-        "lib": ["ESNext", "DOM"],
-        "types": ["bun"],
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "outDir": "dist/",
-        "resolveJsonModule": true,
-        "rootDir": "lib/",
-        "target": "ESNext",
-        "esModuleInterop": true,
-        "strict": true,
-        "skipLibCheck": true
-    },
-    "exclude": ["tsdown.config.ts", "dist/", "node_modules"]
+	"compilerOptions": {
+		"noEmit": true,
+		"declaration": false,
+		"lib": ["ESNext", "DOM"],
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"target": "ESNext",
+		"skipLibCheck": true,
+		"strict": true,
+		"allowImportingTsExtensions": true,
+		"erasableSyntaxOnly": true,
+		"types": ["bun"]
+	},
+	"exclude": ["dist/", "node_modules", "**/node_modules/*"]
 }

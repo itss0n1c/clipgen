@@ -6,7 +6,7 @@ import type {
 	ClipgenBuildParams,
 	ClipgenWebclipBuildParams,
 	ClipgenWebclipMobileconfig,
-} from './types';
+} from './types.ts';
 
 export class ClipgenError extends Error {
 	constructor(message: string) {
@@ -117,4 +117,4 @@ export async function generate(data: ClipgenBuildParams): Promise<Uint8Array<Arr
 	throw new ClipgenError('Invalid build type.');
 }
 
-export type * from './types';
+export type * from './types.ts';

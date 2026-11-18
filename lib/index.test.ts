@@ -1,5 +1,5 @@
 import { test } from 'bun:test';
-import { generate } from '.';
+import { generate } from './index.ts';
 
 test('generates a webclip config', async () => {
 	const config = await generate({
