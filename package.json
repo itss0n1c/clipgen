@@ -15,9 +15,8 @@
 	],
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"browser": "./dist/browser.js",
 	"exports": {
-		"browser": "./dist/browser.js",
+		"types": "./dist/index.d.ts",
 		"import": "./dist/index.js"
 	},
 	"scripts": {
