@@ -1,5 +1,6 @@
 # Clipgen
-### A web clip and adhoc config generator.
+
+### Generate iOS Web Clip profiles and ad hoc installation manifests.
 
 <a href="https://discord.gg/bMFPpxtMTe"><img src="https://img.shields.io/discord/977286501756968971?color=5865F2&logo=discord&logoColor=white" alt="Discord server" /></a>
 <a href="https://www.npmjs.com/package/clipgen"><img src="https://img.shields.io/npm/v/clipgen?maxAge=3600" alt="npm version" /></a>
@@ -7,8 +8,9 @@
 
 ### Documentation live at https://s0n1c.ca/clipgen
 
-
 ## Installation
+
+Clipgen is ESM-only; use `import` rather than `require`.
 
 ```bash
 $ bun i clipgen
@@ -32,18 +34,18 @@ const config = await generate({
 			url: 'https://s0n1c.ca',
 			icon: new URL('https://s0n1c.ca/me.png'), // or an ArrayBufferLike
 		},
-	]
+	],
 });
 
-console.log(config); // outputs the generated config as an ArrayBuffer
+console.log(config); // Uint8Array containing the generated profile
 ```
 
-For adhoc configs:
+For ad hoc installation manifests:
 
 ```ts
 import { generate } from 'clipgen';
 
-let config = await generate({
+const config = await generate({
 	type: 'adhoc',
 	items: [
 		{
@@ -51,9 +53,10 @@ let config = await generate({
 			url: 'https://example.com/App.ipa',
 			icon: 'https://example.com/AppIcon.png',
 			identifier: 'com.example.app',
+			version: '1.0.0',
 		},
 	],
 });
 
-console.log(config); // outputs the generated config as an ArrayBuffer
+console.log(config); // Uint8Array containing the generated manifest
 ```
